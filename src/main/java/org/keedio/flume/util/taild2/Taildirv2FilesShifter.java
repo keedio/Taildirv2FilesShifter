@@ -124,15 +124,12 @@ public class Taildirv2FilesShifter {
         ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream(fis);
-            //map = (Map<String, InodeInfo>) ois.readObject();
             map = (HashMap) ois.readObject();
         } catch (EOFException eof){
             logger.error(eof);
-            //return false;
         } catch (IOException e){
             logger.error(e);
         }
-
 
         Set<String> elements = map.keySet();
         for (String element : elements) {
@@ -145,13 +142,13 @@ public class Taildirv2FilesShifter {
             originalFilesMap.put(file.getAbsolutePath(), lines);
         }
 
-        logger.info("originalFilesMap: " + originalFilesMap);
-        logger.info("processedFilesMap: " + processedFilesMap);
+        logger.trace("originalFilesMap: " + originalFilesMap);
+        logger.trace("processedFilesMap: " + processedFilesMap);
 
         MapDifference<String, Long> mapDifference = Maps.difference(originalFilesMap, processedFilesMap);
         Map<String, Long> entriesInCommon = mapDifference.entriesInCommon();
         if (entriesInCommon.isEmpty()) {
-            logger.info("No more files processed, nothing to move");
+            logger.info("No more files processed, nothing to move.");
         } else {
             for (String pathTofile : entriesInCommon.keySet()) {
                 if (new File(pathTofile).exists()) {
@@ -166,13 +163,6 @@ public class Taildirv2FilesShifter {
                 }
             }
         }
-
-//        try {
-//            fis.close();
-//            ois.close();
-//        } catch (IOException e){
-//            logger.error(e);
-//        }
         return true;
     }
 
